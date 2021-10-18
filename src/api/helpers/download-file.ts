@@ -52,6 +52,7 @@ export async function downloadFileToBase64(
       }
     }
 
+    //@ts-ignore
     const content = Buffer.from(response.data, 'binary').toString('base64');
 
     return `data:${mimeType};base64,${content}`;
