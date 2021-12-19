@@ -36,6 +36,7 @@ import {
 } from '../model';
 import { ChatState } from '../model/enum';
 import { ListenerLayer } from './listener.layer';
+import { defaultLogger as logger } from '../../utils/logger';
 
 export class SenderLayer extends ListenerLayer {
   constructor(public page: Page, session?: string, options?: CreateConfig) {
@@ -728,6 +729,7 @@ export class SenderLayer extends ListenerLayer {
     to: string,
     path: string
   ): Promise<SendStickerResult | false> {
+    logger.info(`path ${path}`);
     let b64 = await downloadFileToBase64(path, [
       'image/gif',
       'image/png',
@@ -735,18 +737,25 @@ export class SenderLayer extends ListenerLayer {
       'image/jpeg',
       'image/webp',
     ]);
+    logger.info(`b64`);
     if (!b64) {
       b64 = await fileToBase64(path);
     }
     if (b64) {
+      logger.info(`b64`);
       const buff = Buffer.from(
         b64.replace(/^data:image\/(png|jpe?g|webp|gif);base64,/, ''),
         'base64'
       );
+      logger.info(`buff`);
       const mimeInfo = base64MimeType(b64);
 
+      logger.info(`mimeInfo ${mimeInfo}`);
       if (!mimeInfo || mimeInfo.includes('image')) {
         let obj = await stickerSelect(buff, 0);
+        logger.info(`obj1 ` + JSON.stringify(obj));
+        logger.info(`obj2 ` + JSON.stringify(obj['webpBase64']));
+        logger.info(`obj3 ` + JSON.stringify(obj['metadata']));
         if (typeof obj == 'object') {
           let _webb64 = obj['webpBase64'];
           let _met = obj['metadata'];
@@ -757,6 +766,7 @@ export class SenderLayer extends ListenerLayer {
             },
             { _webb64, to, _met }
           );
+          logger.info(`result ` + JSON.stringify(result));
           if (result['erro'] == true) {
             throw result;
           }

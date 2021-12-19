@@ -30,10 +30,10 @@ wppconnect
       console.log('Session name: ', session);
     },
     // whatsappVersion: "2.2134.10",
-    headless: false, // Headless chrome
-    devtools: true, // Open devtools by default
+    headless: true, // Headless chrome
+    devtools: false, // Open devtools by default
     useChrome: true, // If false will use Chromium instance
-    debug: false, // Opens a debug session
+    debug: true, // Opens a debug session
     logQR: true, // Logs QR automatically in terminal
     browserWS: '', // If u want to use browserWSEndpoint
     browserArgs: [
@@ -113,6 +113,12 @@ function start(client) {
           '*/game* - O bot perde também :(.\n' +
           '*/help* - Lista de comandos.',
         message.id.toString()
+      );
+    } else if (message.body.indexOf('/sticker') !== -1) {
+      console.log(message.chatId);
+      client.sendImageAsSticker(
+        message.chatId,
+        'https://oticapaulocuja.com.br/sticker.webp'
       );
     }
   });

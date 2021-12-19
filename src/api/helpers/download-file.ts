@@ -16,27 +16,32 @@
  */
 
 import axios from 'axios';
+import { defaultLogger as logger } from '../../utils/logger';
 
 export async function downloadFileToBase64(
   _path: string,
   _mines: (string | RegExp)[] = []
 ): Promise<string | false> {
+  logger.info(`1`);
   if (!Array.isArray(_mines)) {
     console.error(`set mines string array, not "${typeof _mines}" `);
     return false;
   }
 
+  logger.info(`2`);
   const reHttp = /^https?:/;
 
   if (!reHttp.test(_path)) {
     return false;
   }
 
+  logger.info(`3`);
   try {
     const response = await axios.get<any>(_path, {
       responseType: 'arraybuffer',
     });
 
+    logger.info(`4`);
     const mimeType = response.headers['content-type'];
 
     if (_mines.length) {
@@ -52,10 +57,14 @@ export async function downloadFileToBase64(
       }
     }
 
+    logger.info(`a`);
     const content = Buffer.from(response.data, 'binary').toString('base64');
 
+    logger.info(`b`);
     return `data:${mimeType};base64,${content}`;
-  } catch (error) {}
+  } catch (error) {
+    logger.info(`error ` + JSON.stringify(error));
+  }
 
   return false;
 }
